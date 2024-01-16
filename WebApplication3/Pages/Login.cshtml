@@ -1,0 +1,53 @@
+﻿@page
+@model WebApplication3.Pages.LoginModel
+@{
+	<div class="container mt-5">
+		<script src="https://www.google.com/recaptcha/api.js"></script>
+		<script>
+			function onSubmit(token) {
+				document.getElementById("demo-form").submit();
+			}
+		</script>
+
+
+
+		<div class="row justify-content-center align-items-center">
+
+			<div class="col-sm-12 col-md-12 col-lg-4">
+				<h1 class="mb-3">Login </h1>
+
+				<form method="post" asp-antiforgery="true" id="demo-form">
+
+					<div asp-validation-summary="All" class="text-danger"></div>
+
+					<div class="mb-3">
+						<label class="form-label" asp-for="LModel.Email">Email Address</label>
+						<input type="Text" asp-for="LModel.Email" class="form-control" />
+						<span asp-validation-for="LModel.Email" class="text-danger"></span>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label" asp-for="LModel.Password">Password</label>
+						<input type="password" asp-for="LModel.Password" class="form-control" />
+						<span asp-validation-for="LModel.Password" class="text-danger"></span>
+					</div>
+
+					<div class="mb-3 form-check">
+						<input type="checkbox" asp-for="LModel.RememberMe" class="form-check-input" />
+						<label class="form-check-label" asp-for="LModel.RememberMe">Remember Me?</label>
+					</div>
+
+					<div class="mb-3">
+						<button
+							class="btn btn-primary g-recaptcha"
+							data-sitekey="6Le5f1EpAAAAAC2kgnd9hKHkdLEVfZlEZlgpLn21"
+							data-callback='onSubmit'
+							data-action='submit'>
+							Login
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+}

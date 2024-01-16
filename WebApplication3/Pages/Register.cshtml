@@ -1,0 +1,170 @@
+﻿@page
+@model WebApplication3.Pages.RegisterModel
+@{
+}
+<div class="container mt-5">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#password').keyup(function () {
+                checkPasswordStrength();
+            });
+        });
+
+        function checkPasswordStrength() {
+            var password = $('#password').val();
+            var strength = 0;
+
+            // Check for minimum length
+            if (password.length >= 12) {
+                strength += 1;
+            }
+
+            // Check for lowercase characters
+            if (password.match(/[a-z]/)) {
+                strength += 1;
+            }
+
+            // Check for uppercase characters
+            if (password.match(/[A-Z]/)) {
+                strength += 1;
+            }
+
+            // Check for numeric characters
+            if (password.match(/\d/)) {
+                strength += 1;
+            }
+
+            // Check for special characters
+            if (password.match(/[^\da-zA-Z]/)) {
+                strength += 1;
+            }
+
+            // Update the UI based on password strength
+            updateStrengthUI(strength);
+        }
+
+        function updateStrengthUI(strength) {
+            var progressBar = $('#password-strength');
+            var strengthText = $('#password-strength-text');
+
+            switch (strength) {
+                case 0:
+                    progressBar.attr('class', 'progress-bar bg-danger');
+                    strengthText.text('Weak');
+                    break;
+                case 1:
+                case 2:
+                    progressBar.attr('class', 'progress-bar bg-warning');
+                    strengthText.text('Moderate');
+                    break;
+                case 3:
+                case 4:
+                    progressBar.attr('class', 'progress-bar bg-info');
+                    strengthText.text('Strong');
+                    break;
+                case 5:
+                    progressBar.attr('class', 'progress-bar bg-success');
+                    strengthText.text('Very Strong');
+                    break;
+                default:
+                    break;
+            }
+
+            progressBar.css('width', (strength * 20) + '%');
+        }
+    </script>
+    <div class="row justify-content-center align-items-center">
+
+        <div class="col-sm-12 col-md-12 col-lg-8">
+            <h1 class="mb-3">Register </h1>
+
+            <form method="post" enctype="multipart/form-data" class="row g-3" asp-antiforgery="true">
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="RModel.FullName">Full Name</label>
+                        <input type="text" asp-for="RModel.FullName" class="form-control" />
+                        <span asp-validation-for="RModel.FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="RModel.Gender">Gender</label>
+                        <input type="text" asp-for="RModel.Gender" class="form-control" />
+                        <span asp-validation-for="RModel.Gender" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="RModel.MobileNo">Mobile Number</label>
+                        <input type="text" asp-for="RModel.MobileNo" class="form-control" />
+                        <span asp-validation-for="RModel.MobileNo" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="RModel.DeliveryAddress">Delivery Address</label>
+                        <input type="text" asp-for="RModel.DeliveryAddress" class="form-control" />
+                        <span asp-validation-for="RModel.DeliveryAddress" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="RModel.Email">Email Address</label>
+                        <input type="text" asp-for="RModel.Email" class="form-control" />
+                        <span asp-validation-for="RModel.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="RModel.AboutMe">About Me</label>
+                        <textarea asp-for="RModel.AboutMe" class="form-control"></textarea>
+                        <span asp-validation-for="RModel.AboutMe" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="RModel.Password">Password</label>
+                        <input type="password" asp-for="RModel.Password" class="form-control" id="password" />
+                        <div class="progress mt-1">
+                            <div id="password-strength" class="progress-bar" role="progressbar"></div>
+                        </div>
+                        <small id="password-strength-text" class="form-text text-muted"></small>
+                        <span asp-validation-for="RModel.Password" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="RModel.ConfirmPassword">Confirm Password</label>
+                        <input type="password" asp-for="RModel.ConfirmPassword" class="form-control" />
+                        <span asp-validation-for="RModel.ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="RModel.Photo">Photo (JPG only)</label>
+                        <input type="file" asp-for="RModel.Photo" class="form-control" accept=".jpg" />
+                        <span asp-validation-for="RModel.Photo" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="RModel.CreditCardNo">Credit Card Number</label>
+                        <input type="text" asp-for="RModel.CreditCardNo" class="form-control" />
+                        <span asp-validation-for="RModel.CreditCardNo" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="RModel.BirthDate">Birth Date</label>
+                        <input type="date" asp-for="RModel.BirthDate" class="form-control" />
+                        <span asp-validation-for="RModel.BirthDate" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="mb-3 text-center">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
