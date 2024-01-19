@@ -10,7 +10,13 @@ namespace WebApplication3.Pages
     {
         public void OnGet()
         {
+			var authTokenInSession = HttpContext.Session.GetString("AuthToken");
+			var authTokenInCookie = Request.Cookies["AuthToken"];
 
-        }
+			if (authTokenInSession != null && authTokenInCookie != null && authTokenInSession != authTokenInCookie)
+			{
+				RedirectToPage("Login");
+			}
+		}
     }
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -5,6 +6,7 @@ using WebApplication3.ViewModels;
 
 namespace WebApplication3.Pages
 {
+	[Authorize]
     public class LogoutModel : PageModel
     {
 		private readonly SignInManager<User> signInManager;
@@ -20,6 +22,8 @@ namespace WebApplication3.Pages
 		{
 			await signInManager.SignOutAsync();
 			HttpContext.Session.Clear();
+			Response.Cookies.Delete("AuthToken");
+			Response.Cookies.Delete(".AspNetCore.Session");
 			return RedirectToPage("Login");
 		}
 

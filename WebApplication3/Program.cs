@@ -13,6 +13,13 @@ builder.Services.AddIdentity<User, IdentityRole>(options => {
 	options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
 	options.Lockout.MaxFailedAccessAttempts = 3;
 	options.Lockout.AllowedForNewUsers = true;
+
+	options.Password.RequiredLength = 12;
+	options.Password.RequireDigit = true;
+	options.Password.RequireLowercase = true;
+	options.Password.RequireUppercase = true;
+	options.Password.RequireNonAlphanumeric = true;
+
 }).AddEntityFrameworkStores<AuthDbContext>();
 
 builder.Services.AddDataProtection();
