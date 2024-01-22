@@ -13,7 +13,7 @@ namespace WebApplication3.ViewModels
         public string Gender { get; set; }
 
         [Required(ErrorMessage = "Mobile Number is required.")]
-        [RegularExpression(@"^[0-9]{8}$", ErrorMessage = "Please enter a valid 8-digit Mobile Number.")]
+        [RegularExpression(@"^[89][0-9]{7}$", ErrorMessage = "Please enter a valid 8-digit Mobile Number.")]
         public string MobileNo { get; set; }
 
         [Required(ErrorMessage = "Delivery Address is required.")]

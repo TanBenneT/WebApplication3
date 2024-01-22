@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Text.Encodings.Web;
 using WebApplication3.ViewModels;
 
 namespace WebApplication3.Pages
@@ -54,13 +55,16 @@ namespace WebApplication3.Pages
                 {
                     UserName = RModel.Email,
                     Email = RModel.Email,
+                    TwoFactorEnabled = true,
+                    EmailConfirmed = true,
                     FullName = RModel.FullName,
                     Gender = RModel.Gender,
                     MobileNo = RModel.MobileNo,
-                    DeliveryAddress = RModel.DeliveryAddress,
+                    DeliveryAddress = HtmlEncoder.Default.Encode(RModel.DeliveryAddress),
                     AboutMe = RModel.AboutMe,
                     CreditCardNo = protector.Protect(RModel.CreditCardNo),
-                    BirthDate = RModel.BirthDate
+                    BirthDate = RModel.BirthDate,
+                    LastPasswordChangeTime = DateTime.UtcNow,
                 };
 
                 var result = await userManager.CreateAsync(user, RModel.Password);

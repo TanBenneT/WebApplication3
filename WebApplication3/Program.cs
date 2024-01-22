@@ -20,6 +20,8 @@ builder.Services.AddIdentity<User, IdentityRole>(options => {
 	options.Password.RequireUppercase = true;
 	options.Password.RequireNonAlphanumeric = true;
 
+    options.User.RequireUniqueEmail = true;
+
 }).AddEntityFrameworkStores<AuthDbContext>();
 
 builder.Services.AddDataProtection();
@@ -27,9 +29,10 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(10);
+    options.IdleTimeout = TimeSpan.FromMinutes(5);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
 });
 
 builder.Services.ConfigureApplicationCookie(Config =>
@@ -38,6 +41,7 @@ builder.Services.ConfigureApplicationCookie(Config =>
     Config.LoginPath = "/Login";
     Config.ExpireTimeSpan = TimeSpan.FromMinutes(5);
     Config.SlidingExpiration = true;
+    Config.Cookie.SameSite = SameSiteMode.Strict;
 });
 
 var app = builder.Build();

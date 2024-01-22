@@ -3,11 +3,14 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Diagnostics;
 using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text.Json;
+using WebApplication3.Model;
 using WebApplication3.ViewModels;
 using static System.Net.WebRequestMethods;
 
@@ -20,13 +23,19 @@ namespace WebApplication3.Pages
 
         private readonly UserManager<User> userManager;
 
-		[BindProperty]
+        private readonly AuthDbContext dbContext;
+
+        private readonly ILogger<LoginModel> logger;
+
+        [BindProperty]
 		public Login LModel { get; set; }
 
-		public LoginModel(SignInManager<User> signInManager, UserManager<User> userManager)
+		public LoginModel(SignInManager<User> signInManager, UserManager<User> userManager, AuthDbContext dbContext, ILogger<LoginModel> logger)
         {
             this.signInManager = signInManager;
             this.userManager = userManager;
+			this.dbContext = dbContext;
+            this.logger = logger;
         }
         public async Task<IActionResult> OnPostAsync()
 		{
@@ -35,38 +44,36 @@ namespace WebApplication3.Pages
                 var valid = ValidateCaptcha();
                 if (valid)
                 {
-					var identityResult = await signInManager.PasswordSignInAsync(LModel.Email, LModel.Password, LModel.RememberMe, true);
+                    var identityResult = await signInManager.PasswordSignInAsync(LModel.Email, LModel.Password, LModel.RememberMe, true);
 					if (identityResult.Succeeded)
 					{
-						var user = await userManager.FindByEmailAsync(LModel.Email);
+                        var user = await userManager.FindByEmailAsync(LModel.Email);
 
-						if (user != null)
+                        if (user != null)
 						{
-							string guid = Guid.NewGuid().ToString();
-							HttpContext.Session.SetString("AuthToken", guid);
+                            string guid = Guid.NewGuid().ToString();
+                            HttpContext.Session.SetString("AuthToken", guid);
 							Response.Cookies.Append("AuthToken", guid, new CookieOptions
 							{
 								HttpOnly = true,
 								Secure = true,
 								SameSite = SameSiteMode.Strict,
-								Expires = DateTimeOffset.UtcNow.AddMinutes(5)
 							});
 
-							HttpContext.Session.SetString("UserEmail", user.Email);
-							HttpContext.Session.SetString("FullName", user.FullName);
-							HttpContext.Session.SetString("Gender", user.Gender);
-							HttpContext.Session.SetString("MobileNo", user.MobileNo);
-							HttpContext.Session.SetString("DeliveryAddress", user.DeliveryAddress);
-							HttpContext.Session.SetString("AboutMe", user.AboutMe);
+                            user.AuthToken = guid;
+                            await userManager.UpdateAsync(user);
 
+                            var logEntry = new AuditLog
+                            {
+                                UserId = user.Id,
+                                Action = "Logging In, New AuthToken Given",
+                                CreatedAt = DateTime.UtcNow,
+                            };
 
-							var dataProtectionProvider = DataProtectionProvider.Create("EncryptData");
-							var protector = dataProtectionProvider.CreateProtector("MySecretKey");
+                            dbContext.AuditLogs.Add(logEntry);
+                            dbContext.SaveChanges();
 
-							HttpContext.Session.SetString("CreditCardNo", protector.Unprotect(user.CreditCardNo));
-							HttpContext.Session.SetString("BirthDate", user.BirthDate.ToString());
-
-							return RedirectToPage("Index");
+                            return RedirectToPage("Index");
 						}
 
 					}
