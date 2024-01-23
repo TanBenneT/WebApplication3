@@ -11,6 +11,7 @@ namespace WebApplication3.ViewModels
         public string DeliveryAddress { get; set; }
         public string AboutMe { get; set; }
         public string CreditCardNo { get; set; }
+        public string PhotoPath { get; set; }
         public DateTime? BirthDate { get; set; }
         public string? AuthToken { get; set; }
         public DateTime? LastPasswordChangeTime { get; set; }

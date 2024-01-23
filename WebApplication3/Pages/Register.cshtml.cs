@@ -51,6 +51,14 @@ namespace WebApplication3.Pages
                 var dataProtectionProvider = DataProtectionProvider.Create("EncryptData");
                 var protector = dataProtectionProvider.CreateProtector("MySecretKey");
 
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                var filePath = Path.Combine(uploadsFolder, RModel.Photo.FileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await RModel.Photo.CopyToAsync(fileStream);
+                }
+
                 var user = new User
                 {
                     UserName = RModel.Email,
@@ -63,6 +71,7 @@ namespace WebApplication3.Pages
                     DeliveryAddress = HtmlEncoder.Default.Encode(RModel.DeliveryAddress),
                     AboutMe = RModel.AboutMe,
                     CreditCardNo = protector.Protect(RModel.CreditCardNo),
+                    PhotoPath = filePath,
                     BirthDate = RModel.BirthDate,
                     LastPasswordChangeTime = DateTime.UtcNow,
                 };

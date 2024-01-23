@@ -36,6 +36,7 @@ namespace WebApplication3.Migrations
                     DeliveryAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AboutMe = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreditCardNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AuthToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastPasswordChangeTime = table.Column<DateTime>(type: "datetime2", nullable: true),

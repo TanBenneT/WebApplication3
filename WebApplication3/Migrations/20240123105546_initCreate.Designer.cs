@@ -12,7 +12,7 @@ using WebApplication3.Model;
 namespace WebApplication3.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20240122142650_initCreate")]
+    [Migration("20240123105546_initCreate")]
     partial class initCreate
     {
         /// <inheritdoc />
@@ -256,6 +256,10 @@ namespace WebApplication3.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("PhotoPath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
