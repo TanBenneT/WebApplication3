@@ -179,6 +179,32 @@ namespace WebApplication3.Migrations
                     b.ToTable("AuditLogs");
                 });
 
+            modelBuilder.Entity("WebApplication3.ViewModels.PasswordHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("HashedPassword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PasswordHistories");
+                });
+
             modelBuilder.Entity("WebApplication3.ViewModels.User", b =>
                 {
                     b.Property<string>("Id")
@@ -330,6 +356,20 @@ namespace WebApplication3.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("WebApplication3.ViewModels.PasswordHistory", b =>
+                {
+                    b.HasOne("WebApplication3.ViewModels.User", null)
+                        .WithMany("PasswordHistories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WebApplication3.ViewModels.User", b =>
+                {
+                    b.Navigation("PasswordHistories");
                 });
 #pragma warning restore 612, 618
         }

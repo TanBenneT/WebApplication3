@@ -15,6 +15,9 @@ namespace WebApplication3.ViewModels
         public DateTime? BirthDate { get; set; }
         public string? AuthToken { get; set; }
         public DateTime? LastPasswordChangeTime { get; set; }
+
+        public List<PasswordHistory> PasswordHistories { get; set; }
+
     }
 }
 

@@ -42,6 +42,8 @@ namespace WebApplication3.Pages
                     return NotFound();
                 }
 
+                var currentPasswordHash = user.PasswordHash;
+
                 if (TempData["NeedChange"] != null)
                 {
                     ModelState.AddModelError(string.Empty, TempData["NeedChange"].ToString());
@@ -55,16 +57,10 @@ namespace WebApplication3.Pages
                     return Page();
                 }
 
-                if (user.LastPasswordChangeTime.HasValue)
+                if (IsPasswordInHistory(user, ChangePassword.ConfirmNewPassword))
                 {
-                    var minPasswordAge = TimeSpan.FromMinutes(30);
-                    var timeSinceLastChange = DateTime.UtcNow - user.LastPasswordChangeTime.Value;
-
-                    if (timeSinceLastChange <= minPasswordAge)
-                    {
-                        ModelState.AddModelError("ChangePassword.CurrentPassword", $"Cannot change password within {minPasswordAge.TotalMinutes} minutes from the last change.");
-                        return Page();
-                    }
+                    ModelState.AddModelError("ChangePassword.ConfirmNewPassword", "New password cannot be the same as a previous passwords.");
+                    return Page();
                 }
 
                 var changePasswordResult = await userManager.ChangePasswordAsync(user, ChangePassword.CurrentPassword, ChangePassword.ConfirmNewPassword);
@@ -81,6 +77,8 @@ namespace WebApplication3.Pages
                     dbContext.AuditLogs.Add(logEntry);
                     dbContext.SaveChanges();
 
+                    AddPasswordToHistory(user, currentPasswordHash);
+
                     user.LastPasswordChangeTime = DateTime.UtcNow;
                     await userManager.UpdateAsync(user);
 
@@ -95,5 +93,51 @@ namespace WebApplication3.Pages
             }
             return Page();
         }
+
+        private bool IsPasswordInHistory(User user, string newPassword)
+        {
+            var userPasswordHistories = dbContext.PasswordHistories
+                .Where(ph => ph.UserId == user.Id)
+                .ToList();
+
+            var passwordHasher = new PasswordHasher<User>();
+            foreach (var passwordHistory in userPasswordHistories)
+            {
+                if (passwordHasher.VerifyHashedPassword(user, passwordHistory.HashedPassword, newPassword) == PasswordVerificationResult.Success)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
+        private void AddPasswordToHistory(User user, string currentPassword)
+        {
+            var userPasswordHistories = dbContext.PasswordHistories
+                .Where(ph => ph.UserId == user.Id)
+                .ToList();
+
+            var passwordHistory = new PasswordHistory
+            {
+                UserId = user.Id,
+                HashedPassword = currentPassword,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            dbContext.PasswordHistories.Add(passwordHistory);
+
+            if (userPasswordHistories.Count >= 2)
+            {
+                var entriesToRemove = userPasswordHistories.Skip(2).ToList();
+                dbContext.PasswordHistories.RemoveRange(entriesToRemove);
+            }
+
+            dbContext.SaveChanges();
+        }
+
+
+
     }
 }
