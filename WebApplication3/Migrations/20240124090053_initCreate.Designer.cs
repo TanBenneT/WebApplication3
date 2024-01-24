@@ -12,7 +12,7 @@ using WebApplication3.Model;
 namespace WebApplication3.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20240123155125_initCreate")]
+    [Migration("20240124090053_initCreate")]
     partial class initCreate
     {
         /// <inheritdoc />

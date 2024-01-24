@@ -23,7 +23,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 
     options.User.RequireUniqueEmail = true;
 
-}).AddEntityFrameworkStores<AuthDbContext>();
+}).AddEntityFrameworkStores<AuthDbContext>().AddDefaultTokenProviders();
 
 builder.Services.AddDataProtection();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

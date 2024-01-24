@@ -63,8 +63,6 @@ namespace WebApplication3.Pages
                 {
                     UserName = RModel.Email,
                     Email = RModel.Email,
-                    TwoFactorEnabled = true,
-                    EmailConfirmed = true,
                     FullName = RModel.FullName,
                     Gender = RModel.Gender,
                     MobileNo = RModel.MobileNo,

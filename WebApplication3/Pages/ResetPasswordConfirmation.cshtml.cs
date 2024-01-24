@@ -21,9 +21,9 @@ namespace WebApplication3.Pages
 		[BindProperty]
 		public ResetPassword ResetPassword { get; set; }
 
-		public async Task<IActionResult> OnGetAsync(string userId)
+		public async Task<IActionResult> OnGetAsync(string userId, string token)
 		{
-			if (userId == null)
+			if (userId == null || token == null)
 			{
 				return RedirectToPage("Login");
 			}
@@ -38,7 +38,7 @@ namespace WebApplication3.Pages
 			return Page();
 		}
 
-		public async Task<IActionResult> OnPostAsync(string userId)
+		public async Task<IActionResult> OnPostAsync(string userId, string token)
 		{
 			if (ModelState.IsValid)
 			{
@@ -57,7 +57,7 @@ namespace WebApplication3.Pages
 					return Page();
 				}
 
-				var changePasswordResult = await userManager.ChangePasswordAsync(user, ResetPassword.NewPassword, ResetPassword.ConfirmNewPassword);
+				var changePasswordResult = await userManager.ResetPasswordAsync(user, token, ResetPassword.ConfirmNewPassword);
 
 				if (changePasswordResult.Succeeded)
 				{

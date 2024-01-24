@@ -28,17 +28,19 @@ namespace WebApplication3.Pages
         {
             if (ModelState.IsValid)
             {
-                var existingUser = await userManager.FindByEmailAsync(Email);
+				var existingUser = await userManager.FindByEmailAsync(Email);
                 if (existingUser == null)
                 {
                     ModelState.AddModelError("Email", "Email Does Not Exist.");
                     return Page();
                 }
 
+                var token = await userManager.GeneratePasswordResetTokenAsync(existingUser);
+
 				var resetLink = Url.Page(
 				        "/ResetPasswordConfirmation",
 				        pageHandler: null,
-				        values: new { userId = existingUser.Id },
+				        values: new { userId = existingUser.Id, token = token },
 				        protocol: Request.Scheme);
 
 				var client = new SmtpClient("smtp.gmail.com", 587)
