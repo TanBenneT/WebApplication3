@@ -57,7 +57,19 @@ namespace WebApplication3.Pages
                     return Page();
                 }
 
-                if (IsPasswordInHistory(user, ChangePassword.ConfirmNewPassword))
+				if (user.LastPasswordChangeTime.HasValue)
+				{
+					var minPasswordAge = TimeSpan.FromMinutes(30);
+					var timeSinceLastChange = DateTime.UtcNow - user.LastPasswordChangeTime.Value;
+
+					if (timeSinceLastChange <= minPasswordAge)
+					{
+						ModelState.AddModelError("ChangePassword.CurrentPassword", $"Cannot change password within {minPasswordAge.TotalMinutes} minutes from the last change.");
+						return Page();
+					}
+				}
+
+				if (IsPasswordInHistory(user, ChangePassword.ConfirmNewPassword))
                 {
                     ModelState.AddModelError("ChangePassword.ConfirmNewPassword", "New password cannot be the same as a previous passwords.");
                     return Page();

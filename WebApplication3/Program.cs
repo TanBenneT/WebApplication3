@@ -9,16 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<AuthDbContext>();
 
-builder.Services.AddIdentity<User, IdentityRole>(options => {
-	options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-	options.Lockout.MaxFailedAccessAttempts = 3;
-	options.Lockout.AllowedForNewUsers = true;
+builder.Services.AddIdentity<User, IdentityRole>(options =>
+{
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.MaxFailedAccessAttempts = 3;
+    options.Lockout.AllowedForNewUsers = true;
 
-	options.Password.RequiredLength = 12;
-	options.Password.RequireDigit = true;
-	options.Password.RequireLowercase = true;
-	options.Password.RequireUppercase = true;
-	options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 12;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
 
     options.User.RequireUniqueEmail = true;
 
