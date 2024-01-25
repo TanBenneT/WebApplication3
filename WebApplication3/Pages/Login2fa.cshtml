@@ -3,11 +3,18 @@
 @{
 }
 <div class="container mt-5">
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <script>
+        function onSubmit(token) {
+            document.getElementById("demo-form").submit();
+        }
+    </script>
+
     <div class="row justify-content-center align-items-center">
         <div class="col-sm-12 col-md-12 col-lg-4">
             <h1 class="mb-3">Enter the 2FA code</h1>
 
-            <form method="post" asp-antiforgery="true">
+            <form method="post" asp-antiforgery="true" id="demo-form">
 
                 <div class="mb-3">
                     <label class="form-label" asp-for="Code">Code</label>
@@ -16,7 +23,12 @@
                 </div>
 
                 <div class="mb-3">
-                    <button class="btn btn-primary" type="submit">Enter Code</button>
+                    <button class="btn btn-primary g-recaptcha"
+                            data-sitekey="6Le5f1EpAAAAAC2kgnd9hKHkdLEVfZlEZlgpLn21"
+                            data-callback='onSubmit'
+                            data-action='submit'>
+                        Enter Code
+                    </button>
                 </div>
             </form>
         </div>

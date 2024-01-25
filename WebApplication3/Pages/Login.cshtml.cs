@@ -89,9 +89,9 @@ namespace WebApplication3.Pages
                             return Page();
                         }
 
-                        var code = await userManager.GenerateTwoFactorTokenAsync(existingUser, userManager.Options.Tokens.AuthenticatorTokenProvider);
+                        var code = await userManager.GenerateTwoFactorTokenAsync(existingUser, "Email");
 
-                        var message = "Your one-time verification code is: " + code;
+                        var message = $"Your one-time verification code is: {code}";
 
                         var client = new SmtpClient("smtp.gmail.com", 587)
                         {
@@ -99,10 +99,9 @@ namespace WebApplication3.Pages
                             EnableSsl = true
                         };
 
-                        MailMessage mail = new MailMessage("freshfarmmarket@mail.com", LModel.Email, "2FA Code", $"{code}");
-                        mail.IsBodyHtml = true;
+                        MailMessage mail = new MailMessage("freshfarmmarket@mail.com", LModel.Email, "2FA Code", message);
                         client.Send(mail);
-                        return RedirectToPage("Login2fa");
+                        return RedirectToPage("Login2fa", new {Email = LModel.Email});
                     }
 					else if (identityResult.IsLockedOut)
 					{
