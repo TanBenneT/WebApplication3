@@ -72,6 +72,8 @@ namespace WebApplication3.Pages
                     PhotoPath = filePath,
                     BirthDate = RModel.BirthDate,
                     LastPasswordChangeTime = DateTime.UtcNow,
+                    EmailConfirmed = true,
+                    TwoFactorEnabled = true
                 };
 
                 var result = await userManager.CreateAsync(user, RModel.Password);

@@ -7,11 +7,14 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Net;
+using System.Net.Mail;
 using System.Reflection;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using WebApplication3.Model;
 using WebApplication3.ViewModels;
+using static QRCoder.PayloadGenerator;
 using static System.Net.WebRequestMethods;
 
 namespace WebApplication3.Pages
@@ -77,6 +80,30 @@ namespace WebApplication3.Pages
 						}
 
 					}
+                    else if (identityResult.RequiresTwoFactor)
+                    {
+                        var existingUser = await userManager.FindByEmailAsync(LModel.Email);
+                        if (existingUser == null)
+                        {
+                            ModelState.AddModelError("Email", "Email Does Not Exist.");
+                            return Page();
+                        }
+
+                        var code = await userManager.GenerateTwoFactorTokenAsync(existingUser, userManager.Options.Tokens.AuthenticatorTokenProvider);
+
+                        var message = "Your one-time verification code is: " + code;
+
+                        var client = new SmtpClient("smtp.gmail.com", 587)
+                        {
+                            Credentials = new NetworkCredential("forschoolkenneth@gmail.com", "jnhd nwgr zfdk vmyr"),
+                            EnableSsl = true
+                        };
+
+                        MailMessage mail = new MailMessage("freshfarmmarket@mail.com", LModel.Email, "2FA Code", $"{code}");
+                        mail.IsBodyHtml = true;
+                        client.Send(mail);
+                        return RedirectToPage("Login2fa");
+                    }
 					else if (identityResult.IsLockedOut)
 					{
 						ModelState.AddModelError("", "Account is locked. Please try again later or reset your password.");
